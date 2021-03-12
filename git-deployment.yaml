@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git-server
+  labels:
+    app: git-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git-server
+  template:
+    metadata:
+      labels:
+        app: git-server
+    spec:
+      containers:
+      - name: git-server
+        image: svl-artifactory.juniper.net/atom-docker/atom-of/jdeployer/git-server:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: git-server
+  namespace: default
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+#    targetPort: 8080
+  selector:
+    app: git-server
+  type: ClusterIP
